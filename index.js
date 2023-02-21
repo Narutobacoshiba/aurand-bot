@@ -270,9 +270,9 @@ async function main() {
                     `(Gas: ${result.gasUsed}/${result.gasWanted}; Block height: ${result.height}; Transaction: ${result.transactionHash})`,
                     ),
                 )
-            } 
-
-            await sleep(1000)
+            } else {
+                await sleep(1000)
+            }
             
         }catch (e) {
             console.error(errorColor(e.toString()));
