@@ -72,10 +72,15 @@ let nextSignData = {
     accountNumber: NaN,
     sequence: NaN,
 };
-  
+ 
 function getNextSignData() {
     let out = { ...nextSignData }; // copy values
     nextSignData.sequence += 1;
+    return out;
+}
+
+function getCurrentSignData() {
+    let out = { ...nextSignData }; // copy values
     return out;
 }
   
@@ -88,6 +93,7 @@ export async function resetSignData(client, botAddress) {
     };
     console.log(infoColor(`Sign data set to: ${JSON.stringify(nextSignData)}`));
 }
+
 
 function sha512_to_base64(input) {
     return crypto.createHash('sha512').update(input).digest('base64')
@@ -166,7 +172,7 @@ async function main() {
                 aurandContract, 
                 QueryNumberOfCommitment
             )
-
+  
             if (res && res.num > 0) {
                 console.info(infoColor("Detect commitments ..."))
                 console.info(infoColor("Get random org randomness ..."));
@@ -214,7 +220,7 @@ async function main() {
                         contract: aurandContract,
                         msg: toUtf8(
                             JSON.stringify({
-                                add_randomness: {
+                                add_nois_randomness: {
                                     random_value: JSON.stringify(random_value.random),
                                     signature: random_value.signature
                                 },
@@ -224,7 +230,10 @@ async function main() {
                 };
                 
                 const memo = "Bot add randomness";
-                const signData = getNextSignData(); // Do this the manual way to save one query
+                //const signData = getNextSignData(); // Do this the manual way to save one query
+                
+                await resetSignData(client, botAddress)
+                const signData = getCurrentSignData()
 
                 /*
                     As max callback and limit gas callback for each add randomness message in aurand can be changed 
